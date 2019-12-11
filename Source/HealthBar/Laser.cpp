@@ -50,6 +50,6 @@ void ALaser::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void ALaser::FireInDirection(const FVector& ShootDirection)
 {
-	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;	
+	// ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;	
 }
 

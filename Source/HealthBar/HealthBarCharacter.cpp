@@ -218,30 +218,33 @@ void AHealthBarCharacter::SortCubemonHp()
 	TArray<AActor*> Cubemons;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACubemon::StaticClass(), Cubemons);
 	int num = Cubemons.Num();
-	for (int i = num-1; i > 0; i--)
-	{
-		for (int j = i; j >= 1; j--)
-		{
-			ACubemon* CurrentCubemon = Cast<ACubemon>(Cubemons[j]);
-			ACubemon* PreviousCubemon = Cast<ACubemon>(Cubemons[j - 1]);
-			GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, "In functions");
-
-			if (CurrentCubemon->HP > PreviousCubemon->HP)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, "Swapping");
-
-				Cubemons.Swap(j, j - 1);
-			}
-		}
-		
-	}
-
-	for (int i = 0; i < num; i++)
+	TArray<int> CubemonHps;
+	for (int i = 0;i<num;i++)
 	{
 		ACubemon* CurrentCubemon = Cast<ACubemon>(Cubemons[i]);
-		auto hp = FString::FromInt(CurrentCubemon->HP*100);
-		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Black, hp);
+		CubemonHps.Add(CurrentCubemon->HP*100);
 	}
+	int i = -1;
+	int key = -1;
+	int j = -1;
+	for(i = 1;i<num;i++)
+	{
+		key = CubemonHps[i];
+		j = i - 1;
+		while (j>=0 && CubemonHps[j] < key)
+		{
+			CubemonHps[j + 1] = CubemonHps[j];
+			j = j - 1;
+		}
+		CubemonHps[j + 1] = key;
+	}
+
+	for (auto CubemonHp : CubemonHps)
+	{
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Green, FString::FromInt(CubemonHp));
+	}
+
 
 }
 
@@ -258,15 +261,15 @@ void AHealthBarCharacter::AlternateFire()
 		{
 			if (bUsingMotionControllers)
 			{
-				const FRotator SpawnRotation = VR_MuzzleLocation->GetComponentRotation();
-				const FVector SpawnLocation = VR_MuzzleLocation->GetComponentLocation();
+				const FRotator SpawnRotation = GetControlRotation();
+				const FVector SpawnLocation = FirstPersonCameraComponent->GetComponentLocation();
 				World->SpawnActor<ALaser>(laser, SpawnLocation, SpawnRotation);
 			}
 			else
 			{
 				const FRotator SpawnRotation = GetControlRotation();
 				// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-				const FVector SpawnLocation = ((FP_MuzzleLocation != nullptr) ? FP_MuzzleLocation->GetComponentLocation() : GetActorLocation()) + SpawnRotation.RotateVector(GunOffset);
+				const FVector SpawnLocation = FirstPersonCameraComponent->GetComponentLocation();
 
 				//Set Spawn Collision Handling Override
 				FActorSpawnParameters ActorSpawnParams;

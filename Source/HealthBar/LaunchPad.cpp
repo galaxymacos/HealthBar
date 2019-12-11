@@ -5,6 +5,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "HealthBarCharacter.h"
 #include "GameFramework/Controller.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ALaunchPad::ALaunchPad()
@@ -34,12 +36,14 @@ void ALaunchPad::Tick(float DeltaTime)
 
 void ALaunchPad::NotifyActorBeginOverlap(AActor* OtherActor)
 {
+	
 	AHealthBarCharacter* player = Cast<AHealthBarCharacter>(OtherActor);
 	if(player != nullptr)
 	{
-		player->LaunchCharacter(FVector(0, 0, 1000), false, false);
-		
-		
+		ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		const FVector forwardVector = playerCharacter->GetActorForwardVector();
+		const FVector compositeVector = forwardVector * 1000 + FVector(0, 0, 1000);
+		playerCharacter->LaunchCharacter(compositeVector, false, false);
 	}
 }
 
