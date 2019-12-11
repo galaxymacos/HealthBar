@@ -194,6 +194,10 @@ void AHealthBarCharacter::DamageFurthestCubemon()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACubemon::StaticClass(), Cubemons);
 	float longest = -1;
 	int num = Cubemons.Num();
+	if(num <= 0)
+	{
+		return;
+	}
 	ACubemon* farthestCubemon = nullptr;
 
 	for (int i = 0;i<num;i++)
@@ -207,6 +211,17 @@ void AHealthBarCharacter::DamageFurthestCubemon()
 				farthestCubemon = Cast<ACubemon>(Cubemons[i]);
 			}
 		}		
+	}
+	for (AActor* Cubemon : Cubemons)
+	{
+		if (GetDistanceTo(Cast<ACubemon>(Cubemon)) > longest)
+		{
+			if (GetDistanceTo(Cast<ACubemon>(Cubemon)) <= 1000)
+			{
+				longest = GetDistanceTo(Cast<ACubemon>(Cubemon));
+				farthestCubemon = Cast<ACubemon>(Cubemon);
+			}
+		}
 	}
 	farthestCubemon->HP -= 0.1f;
 

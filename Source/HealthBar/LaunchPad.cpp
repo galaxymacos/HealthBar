@@ -40,10 +40,12 @@ void ALaunchPad::NotifyActorBeginOverlap(AActor* OtherActor)
 	AHealthBarCharacter* player = Cast<AHealthBarCharacter>(OtherActor);
 	if(player != nullptr)
 	{
-		ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-		const FVector forwardVector = playerCharacter->GetActorForwardVector();
+		
+		// ACharacter* playerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		
+		const FVector forwardVector = player->GetActorForwardVector();
 		const FVector compositeVector = forwardVector * 1000 + FVector(0, 0, 1000);
-		playerCharacter->LaunchCharacter(compositeVector, false, false);
+		player->LaunchCharacter(compositeVector, false, false);
 	}
 }
 
